@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Libros</title>
+</head>
+<body>
+    <h1>Lista de Libros</h1>
+
+    <form action="/agregar_libro" method="POST">
+        <label for="titulo">Título:</label>
+        <input type="text" id="titulo" name="titulo" required>
+        <label for="autor">Autor:</label>
+        <input type="text" id="autor" name="autor" required>
+        <button type="submit">Agregar Libro</button>
+    </form>
+
+    <ul>
+        {% for libro in libros %}
+            <li>{{ libro.id }} - {{ libro.titulo }} - {{ libro.autor }}</li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>

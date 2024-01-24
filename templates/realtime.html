@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <!--TODO: Configuración del encabezado -->
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static' , filename='chat.css') }}">
+
+    <!--TODO: Enlace al archivo de estilos chat.css -->
+    <title>Chat Avanzado</title>
+</head>
+<body>
+    <!--TODO: Estructura del cuerpo del documento -->
+
+    <!--TODO: Título del chat -->
+    <h1>Chat Avanzado</h1>
+
+    <!--TODO: Formulario para ingresar el nombre y el nuevo mensaje -->
+    <form id="formulario_mensaje">
+        <label>Nombre:</label>
+        <input type="text" id="nombre" name="nombre" value="{{ nombre }}" required>
+        <br>
+        <label>Nuevo Mensaje:</label>
+        <input type="text" id="nuevo_mensaje" name="nuevo_mensaje" required></input>
+        <br>
+        <button type="submit">Enviar</button>
+    </form>
+
+    <!--TODO: Lista de mensajes -->
+    <ul id="lista-mensajes">
+        {% for mensaje in mensajes %}
+            <!--TODO: Renderizar cada mensaje en la lista -->
+            <li>{{ mensaje }}</li>
+        {% endfor %}
+    </ul>
+</body>
+
+<!--TODO: Inclusión de la biblioteca Socket.IO -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/3.0.3/socket.io.js"></script>
+<script>
+    /* TODO: Esperar a que el DOM este completamente cargado */
+    document.addEventListener('DOMContentLoaded',function(){
+        /* TODO: Conectar al servidor socket.IO en el mismo dominio y puerto */
+        var socket = io.connect('http://'+ document.domain + ':' + location.port)
+
+        //TODO: Escuchar el evento 'actualizar_mensajes' desde el servidor
+        socket.on('actualizar_mensajes',function(data){
+            //TODO: Obtener la lista de mensajes y crear un nuevo elemento de lista con el mensaje recibido
+            var listamensajes = document.getElementById('lista-mensajes')
+            var nuevomensaje = document.createElement('li')
+            nuevomensaje.textContent = data.nombre + ':' + data.mensaje
+            listamensajes.appendChild(nuevomensaje)
+        })
+
+        //TODO: Obtener el formulario y agregar un evento de escucha para el evento de envío
+        var formulario = document.getElementById('formulario_mensaje')
+        formulario.addEventListener('submit',function(event){
+            //TODO: Evitar que el formulario se envíe de manera predeterminada
+            event.preventDefault();
+
+            //TODO: Obtener el nombre y el nuevo mensaje del formulario
+            var nombre = document.getElementById('nombre').value;
+            var nuevo_mensaje = document.getElementById('nuevo_mensaje').value;
+
+            //TODO: Emitir un evento 'mensaje' al servidor con los datos ingresados por el usuario
+            socket.emit('mensaje',{'nombre' : nombre,'mensaje' : nuevo_mensaje})
+
+            //TODO: Limpiar el campo del nuevo mensaje después de enviarlo
+            document.getElementById('nuevo_mensaje').value = '';
+        })
+    })
+</script>
+</html>
